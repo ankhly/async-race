@@ -1,8 +1,29 @@
 const body = document.querySelector('body') as HTMLElement;
 
-export function renderSVG(color:string):string {
+export function renderHeaderPage():string {
+  const page = `<div class="wrapper">
+  <main class="page">
+    <div class="page__garage">
+      <div class="page__container container">
+        <header class="page__nav nav-page">
+           <button class="nav-page__togarage btn">To garage</button>
+           <button class="nav-page__towinners btn">To winners</button>
+        </header>
+        <div class="page__body"> 
+        
+        </div>
+      </div>
+    </div>
+  </main>
+</div>`;
+  body.insertAdjacentHTML('beforeend', page);
+
+  return page;
+}
+
+export function renderSVG(color:string, width:string, height:string):string {
   const svg = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" 
-  width="100px" height="60px" viewBox="0 0 1280.000000 280.000000" preserveAspectRatio="xMidYMid meet">
+  width="${width}" height="${height}" viewBox="0 0 1280.000000 280.000000" preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,640.000000) scale(0.100000,-0.100000)" fill=${color} stroke="none">
   <path d="M3565 5336 c-106 -30 -101 -26 -108 -111 -4 -42 -9 -80 -12 -85 -6
 -10 -246 -105 -590 -234 -448 -167 -1052 -415 -1173 -483 -78 -43 -193 -91
@@ -113,7 +134,7 @@ export function renderCar(name:string, color:string, id:number):string {
   <button class="play-car__drive play-btn">D</button>
   <button class="play-car__stop play-btn">S</button>
   <div class="play-car__auto">
-  ${renderSVG(color)}
+  ${renderSVG(color, '100px', '60px')}
   </div>
   <div class="play-car__finish">
     <img src="./finish.svg" alt="">
@@ -124,46 +145,35 @@ export function renderCar(name:string, color:string, id:number):string {
   return blockCar;
 }
 
-function renderGaragePage() {
-  const page = `<div class="wrapper">
-  <main class="page">
-    <div class="page__garage">
-      <div class="page__container container">
-        <div class="page__body">
-          <div class="page__nav nav-page">
-            <a href="#garage" class="nav-page__togarage btn">To garage</a>
-            <a href="#winners" class="nav-page__towinners btn">To winners</a>
-          </div>
-          <div class="page__control control-page">
-            <div class="control-page__block">
-              <input type="text" class="control-page__input-car inp">
-              <input type="color" class="control-page__input-color">
-              <button class="control-page__create btn">Create</button>
-            </div>
-            <div class="control-page__block">
-              <input type="text" class="control-page__input-change-car inp">
-              <input type="color" class="control-page__input-change-color">
-              <button class="control-page__update btn">Update</button>
-            </div>
-            <div class="control-page__buttons buttons">
-              <button class="buttons__race btn">Race</button>
-              <button class="buttons__reset btn">Reset</button>
-              <button class="buttons__generate btn">Generate Cars</button>
-            </div>
-          </div>
-          <h1 class="page__title">Garage (<span>0</span>)</h1>
-          <h2 class="page__sub-title">Page # <span>1</span></h2>
-          <div class="page__car car-page"></div>
-          <button class="page__prev btn">Prev</button>
-          <button class="page__next btn">Next</button>
-        </div>
-      </div>
+export function renderGaragePage():string {
+  const pageBody = document.querySelector('.page__body') as HTMLElement;
+  pageBody.innerHTML = '';
+  const page = `<div class="popup"></div>
+  <div class="page__control control-page">
+    <div class="control-page__block">
+      <input type="text" class="control-page__input-car inp">
+      <input type="color" class="control-page__input-color">
+      <button class="control-page__create btn">Create</button>
     </div>
-  </main>
-</div>`;
-  body.insertAdjacentHTML('beforeend', page);
+    <div class="control-page__block">
+      <input type="text" class="control-page__input-change-car inp">
+      <input type="color" class="control-page__input-change-color">
+      <button class="control-page__update btn">Update</button>
+    </div>
+    <div class="control-page__buttons buttons">
+      <button class="buttons__race btn">Race</button>
+      <button class="buttons__reset btn">Reset</button>
+      <button class="buttons__generate btn">Generate Cars</button>
+    </div>
+  </div>
+  <h1 class="page__title">Garage (<span>0</span>)</h1>
+  <h2 class="page__sub-title">Page # <span>1</span></h2>
+  <div class="page__car car-page"></div>
+  <button class="page__prev btn">Prev</button>
+  <button class="page__next btn">Next</button>`;
+  pageBody.insertAdjacentHTML('beforeend', page);
+  return page;
 }
-renderGaragePage();
 
 export function updateHTMLCar(name:string, color:string, id:number):string {
   const blockCar = `
@@ -177,7 +187,7 @@ export function updateHTMLCar(name:string, color:string, id:number):string {
   <button class="play-car__drive play-btn">D</button>
   <button class="play-car__stop play-btn">S</button>
   <div class="play-car__auto">
-  ${renderSVG(color)}
+  ${renderSVG(color, '100px', '60px')}
   </div>
   <div class="play-car__finish">
     <img src="./finish.svg" alt="">
@@ -186,3 +196,23 @@ export function updateHTMLCar(name:string, color:string, id:number):string {
 </div>`;
   return blockCar;
 }
+
+export function renderWin(nameWin:string, timeWin:number):string {
+  const popup = document.querySelector('.popup') as HTMLElement;
+  const winner = `
+  <div class="popup__body">
+    <div class="popup__text">${nameWin}</div>
+    <div class="popup__text">won</div>
+    <div class="popup__text">(${timeWin}s)!</div>
+  </div>`;
+  if (popup) {
+    popup.style.display = 'inline-flex';
+    popup.insertAdjacentHTML('beforeend', winner);
+  }
+  return winner;
+}
+renderHeaderPage();
+renderGaragePage();
+
+export const toGarage = document.querySelector('.nav-page__togarage') as HTMLButtonElement;
+export const toWinner = document.querySelector('.nav-page__towinners') as HTMLButtonElement;

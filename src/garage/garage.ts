@@ -1,38 +1,46 @@
 import {
   getGarage, createCar, deleteCar, updateCar, paginationPage,
-} from '../api/api';
+} from '../api/apiGarage';
 import { renderCar, updateHTMLCar } from '../ui/uiGarage';
 import {
   getRandomColor, getRandomName, haveCarsPage, showNumPage,
+  savePageNum,
 } from '../utils/utils';
-import { savePageNum } from './store';
+import { controlCar, controlRace } from './animation';
+import { delCarWin, sortWinners } from '../winners/winners';
 
-const carsPage = document.querySelector('.car-page') as HTMLElement;
-const pagePrevBtn = document.querySelector('.page__prev') as HTMLButtonElement;
-const pageNextBtn = document.querySelector('.page__next') as HTMLButtonElement;
-const amountCars = document.querySelector('.page__title span') as HTMLElement;
-const generateBtn = document.querySelector('.buttons__generate') as HTMLElement;
-const createBtn = document.querySelector('.control-page__create') as HTMLButtonElement;
-const updateBtn = document.querySelector('.control-page__update') as HTMLButtonElement;
-const inputCar = document.querySelector('.control-page__input-car') as HTMLInputElement;
-const inputColor = document.querySelector('.control-page__input-color') as HTMLInputElement;
-const inputChangeName = document.querySelector('.control-page__input-change-car') as HTMLInputElement;
-const inputChangeColor = document.querySelector('.control-page__input-change-color') as HTMLInputElement;
-const numPage = Number(localStorage.getItem('countPage')) || 1;
-let getIdCar = 0;
+export const htmlEle = {
+  carsPage: document.querySelector('.car-page') as HTMLElement,
+  pagePrevBtn: document.querySelector('.page__prev') as HTMLButtonElement,
+  pageNextBtn: document.querySelector('.page__next') as HTMLButtonElement,
+  amountCars: document.querySelector('.page__title span') as HTMLElement,
+  generateBtn: document.querySelector('.buttons__generate') as HTMLElement,
+  createBtn: document.querySelector('.control-page__create') as HTMLButtonElement,
+  updateBtn: document.querySelector('.control-page__update') as HTMLButtonElement,
+  inputCar: document.querySelector('.control-page__input-car') as HTMLInputElement,
+  inputColor: document.querySelector('.control-page__input-color') as HTMLInputElement,
+  inputChangeName: document.querySelector('.control-page__input-change-car') as HTMLInputElement,
+  inputChangeColor: document.querySelector('.control-page__input-change-color') as HTMLInputElement,
+  popup: document.querySelector('.popup') as HTMLElement,
+  recetBtn: document.querySelector('.buttons__reset') as HTMLButtonElement,
+  limitCars: 7,
+  raceBtn: document.querySelector('.buttons__race') as HTMLButtonElement,
+};
+
+export const numPage = Number(localStorage.getItem('countPage'));
 let countPage = numPage;
-const limitCars = 7;
+let getIdCar = 0;
 let isUpdate = false;
 let TotalCountCars = 0;
 
-const getAmountCars = () => {
+const getAmountCars = ():void => {
   getGarage().then((arr) => {
-    amountCars.innerHTML = String(arr.length);
+    htmlEle.amountCars.innerHTML = String(arr.length);
     TotalCountCars = arr.length;
   });
 };
 
-const showGarage = (num:number, lim:number) => {
+export const showGarage = (num:number, lim:number):void => {
   paginationPage(num, lim).then((arr) => {
     arr.arr.forEach((e) => {
       if (e.name !== undefined && e.color !== undefined && e.id !== undefined) {
@@ -43,12 +51,11 @@ const showGarage = (num:number, lim:number) => {
   });
   showNumPage(countPage);
 };
-showGarage(countPage, limitCars);
 
 const createNewCar = (createName:string, createColor:string) => {
   createCar({ name: createName, color: createColor })
     .then((i) => {
-      if (i.id !== undefined && haveCarsPage() < limitCars) {
+      if (i.id !== undefined && haveCarsPage() < htmlEle.limitCars) {
         renderCar(i.name, i.color, i.id);
       }
     });
@@ -63,16 +70,17 @@ const removeOrSelectCar = (e:Event) => {
         const selectBtn = carBody.querySelector('.settings-car__select') as HTMLElement;
         if (e.target === selectBtn) {
           isUpdate = true;
-          inputChangeColor.value = el[i].color;
-          inputChangeName.value = el[i].name;
+          htmlEle.inputChangeColor.value = el[i].color;
+          htmlEle.inputChangeName.value = el[i].name;
           getIdCar = el[i].id;
         }
         if (e.target === removeBtn) {
           deleteCar(el[i].id);
           carBody.remove();
           getAmountCars();
-          carsPage.innerHTML = '';
-          showGarage(countPage, limitCars);
+          htmlEle.carsPage.innerHTML = '';
+          showGarage(countPage, htmlEle.limitCars);
+          delCarWin(el[i].id);
         }
       }
     }
@@ -81,8 +89,8 @@ const removeOrSelectCar = (e:Event) => {
 
 const showUpdateCar = () => {
   updateCar(getIdCar, {
-    name: inputChangeName.value,
-    color: inputChangeColor.value,
+    name: htmlEle.inputChangeName.value,
+    color: htmlEle.inputChangeColor.value,
   }).then((e) => {
     const carBodys = document.querySelector(`[data-id = "${(e.id)}"]`) as HTMLElement;
     carBodys.innerHTML = updateHTMLCar(e.name, e.color, e.id);
@@ -91,9 +99,9 @@ const showUpdateCar = () => {
 
 const pageNext = (totalPage:number) => {
   countPage = countPage === totalPage || haveCarsPage() === 0 ? countPage = 1 : countPage + 1;
-  carsPage.innerHTML = '';
+  htmlEle.carsPage.innerHTML = '';
   showNumPage(countPage);
-  showGarage(countPage, limitCars);
+  showGarage(countPage, htmlEle.limitCars);
   savePageNum(countPage);
 };
 
@@ -102,38 +110,49 @@ const pagePrev = (totalPage:number) => {
   if (totalPage === 0) {
     countPage = 1;
   }
-  carsPage.innerHTML = '';
+  htmlEle.carsPage.innerHTML = '';
   showNumPage(countPage);
-  showGarage(countPage, limitCars);
+  showGarage(countPage, htmlEle.limitCars);
   savePageNum(countPage);
 };
 
-document.addEventListener('click', (e:Event) => {
-  const totalPage = Math.ceil(TotalCountCars / limitCars);
+function listenClick(e:Event):void {
+  controlCar(e);
+  sortWinners(e);
+  const totalPage = Math.ceil(TotalCountCars / htmlEle.limitCars);
   removeOrSelectCar(e);
-  if (e.target === createBtn) {
-    if (inputCar.value !== '') {
-      createNewCar(inputCar.value, inputColor.value);
+  if (e.target === htmlEle.createBtn) {
+    if (htmlEle.inputCar.value !== '') {
+      createNewCar(htmlEle.inputCar.value, htmlEle.inputColor.value);
       getAmountCars();
-      inputCar.value = '';
+      htmlEle.inputCar.value = '';
     }
   }
-  if (e.target === updateBtn && inputChangeName.value !== '' && isUpdate) {
-    updateCar(getIdCar, { name: inputChangeName.value, color: inputChangeColor.value });
+  if (e.target === htmlEle.updateBtn && htmlEle.inputChangeName.value !== '' && isUpdate) {
+    updateCar(getIdCar, { name: htmlEle.inputChangeName.value, color: htmlEle.inputChangeColor.value });
     showUpdateCar();
-    inputChangeName.value = '';
+    htmlEle.inputChangeName.value = '';
     isUpdate = false;
   }
-  if (e.target === generateBtn) {
-    for (let i = 0; i < 10; i++) {
+  if (e.target === htmlEle.generateBtn) {
+    for (let i = 0; i < 100; i++) {
       createNewCar(getRandomName(), getRandomColor());
     }
     getAmountCars();
   }
-  if (e.target === pageNextBtn) {
+  if (e.target === htmlEle.pageNextBtn) {
     pageNext(totalPage);
   }
-  if (e.target === pagePrevBtn) {
+  if (e.target === htmlEle.pagePrevBtn) {
     pagePrev(totalPage);
   }
-});
+  if (e.target === htmlEle.raceBtn || e.target === htmlEle.recetBtn) {
+    controlRace(e, htmlEle.raceBtn, htmlEle.recetBtn);
+  }
+  if (e.target === htmlEle.popup) {
+    htmlEle.popup.innerHTML = '';
+    htmlEle.popup.style.display = 'none';
+  }
+}
+
+document.addEventListener('click', listenClick);

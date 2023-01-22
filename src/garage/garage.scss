@@ -8,7 +8,7 @@
 	}
 	// .page__body
 	&__body {
-		padding: 20px 0px 30px 0px;
+		padding: 0px 0px 30px 0px;
 	}
 	// .page__nav
 	&__nav {
@@ -43,6 +43,7 @@
 .nav-page {
 	display: flex;
 	gap: 20px;
+	padding: 20px 0px 0px 0px;
 	// .nav-page__togarage
 	&__togarage {
 	}
@@ -90,6 +91,7 @@
 	}
 	// .buttons__reset
 	&__reset {
+		visibility: hidden;
 	}
 	// .buttons__generate
 	&__generate {
@@ -136,19 +138,24 @@
 	align-items: flex-start;
 	border-bottom: 3px solid #000;
 	position: relative;
+	padding: 0px 0px 10px 0px;
 	// .play-car__drive
 	&__drive {
 	}
 	// .play-car__stop
 	&__stop {
+		visibility: hidden;
 	}
 	// .play-car__auto
 	&__auto {
+		position: absolute;
+		top: -17px;
+		left: 100px;
 	}
 	// .play-car__finish
 	&__finish {
 		position: absolute;
-		top: 10px;
+		top: -5px;
 		right: 100px;
 	}
 }
@@ -177,7 +184,7 @@
 }
 
 .play-btn {
-	border: 2px solid rgb(52, 126, 15);
+	border: 2px solid rgb(126, 96, 15);
 	width: 35px;
 	height: 35px;
 	transition: all 0.3s;
@@ -191,4 +198,38 @@
 
 .page__prev {
 	margin: 0px 20px 0px 0px;
+}
+
+.popup {
+	position: absolute;
+	top: 30%;
+	left: calc((100% - 450px) / 2);
+	z-index: 2;
+	display: none;
+	width: 450px;
+	justify-content: center;
+	background-color: rgb(255, 255, 255);
+	border-radius: 20px;
+	&::before {
+		content: "Close";
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		font-size: 22px;
+		font-weight: 700;
+		cursor: pointer;
+	}
+	// .popup__body
+	&__body {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 5px;
+		padding: 60px 60px;
+	}
+	// .popup__text
+	&__text {
+		font-size: 34px;
+		font-weight: 700;
+	}
 }

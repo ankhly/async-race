@@ -19,3 +19,7 @@ export const showNumPage = (num:number):void => {
   const pageSubTitle = document.querySelector('.page__sub-title span') as HTMLElement;
   pageSubTitle.innerHTML = String(num);
 };
+
+export const savePageNum = (countPageNow:number):void => {
+  localStorage.setItem('countPage', JSON.stringify(countPageNow));
+};
