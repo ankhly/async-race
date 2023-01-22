@@ -1,0 +1,103 @@
+.winners-page {
+	// .winners-page__body
+	&__body {
+	}
+	// .winners-page__title
+	&__title {
+		font-size: 24px;
+		font-weight: 700;
+		&:not(:last-child) {
+			margin: 0px 0px 20px 0px;
+		}
+	}
+	// .winners-page__sub-title
+	&__sub-title {
+		font-size: 20px;
+		font-weight: 700;
+		&:not(:last-child) {
+			margin: 0px 0px 30px 0px;
+		}
+	}
+	// .winners-page__table
+	&__table {
+	}
+}
+.table-winners {
+	font-size: 18px;
+	font-weight: 700;
+	max-width: 480px;
+	// .table-winners__table-title
+	&__table-title {
+	}
+	// .table-winners__num
+	&__num {
+	}
+	// .table-winners__car
+	&__car {
+	}
+	// .table-winners__name
+	&__name {
+	}
+	// .table-winners__wins
+	&__wins {
+		font-weight: 700;
+		position: relative;
+		&::after {
+			position: absolute;
+			top: 0;
+			right: -10px;
+			transform: scale(1.4);
+			content: "🠑";
+		}
+		&.bottom {
+			&::after {
+				content: "🠓";
+			}
+		}
+	}
+	// .table-winners__time
+	&__time {
+		font-weight: 700;
+		position: relative;
+		&::after {
+			position: absolute;
+			top: 12px;
+			right: -10px;
+			transform: scale(1.4);
+			content: "🠑";
+		}
+		&.bottom {
+			&::after {
+				content: "🠓";
+			}
+		}
+	}
+	// .table-winners__winner
+	&__winner {
+		text-align: center;
+	}
+}
+.winner {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(50px, 85px));
+	justify-items: center;
+	align-items: center;
+	gap: 10px;
+	padding: 0px 0px 10px 0px;
+	border-bottom: 1px solid #000;
+	// .winner__num
+	&__num {
+	}
+	// .winner__car
+	&__car {
+	}
+	// .winner__name
+	&__name {
+	}
+	// .winner__wins
+	&__wins {
+	}
+	// .winner__time
+	&__time {
+	}
+}
