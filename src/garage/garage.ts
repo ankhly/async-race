@@ -27,7 +27,7 @@ export const htmlEle = {
   raceBtn: document.querySelector('.buttons__race') as HTMLButtonElement,
 };
 
-export const numPage = Number(localStorage.getItem('countPage'));
+export const numPage = Number(localStorage.getItem('countPage') || 1);
 let countPage = numPage;
 let getIdCar = 0;
 let isUpdate = false;
